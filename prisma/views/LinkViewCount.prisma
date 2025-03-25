@@ -1,0 +1,4 @@
+view LinkViewCount {
+  linkId Int
+  views  Int
+}

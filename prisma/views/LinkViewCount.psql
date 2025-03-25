@@ -1,0 +1,6 @@
+CREATE VIEW "LinkViewCount" AS
+SELECT l.id AS "linkId",
+       COUNT(v.id) AS "views"
+FROM "Link" l
+LEFT JOIN "View" v ON l.id = v."linkId"
+GROUP BY l.id;

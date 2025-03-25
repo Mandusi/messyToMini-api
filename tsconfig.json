@@ -1,0 +1,16 @@
+{
+	"rootDir": "./",
+	"extends": "@tsconfig/node20/tsconfig.json",
+	"compilerOptions": {
+		"outDir": "build",
+		"resolveJsonModule": true,
+		"esModuleInterop": true,
+		"moduleResolution": "node",
+		"typeRoots": ["./node_modules/@types", "./types"],
+		"paths": { "*": ["./types/*"] },
+		"module": "commonjs",
+		"lib": ["es2020", "esnext.asynciterable"]
+	},
+	"include": ["./**/*.ts", "./**/*.js", "./**/*.json", "./**/*.d.ts", "tests/AuthService.test.ts"],
+	"exclude": ["node_modules"]
+}

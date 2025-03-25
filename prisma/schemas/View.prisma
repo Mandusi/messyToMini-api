@@ -1,0 +1,7 @@
+model View {
+  id        Int      @id @default(autoincrement())
+  linkId    Int
+  ip        String
+  createdAt DateTime
+  link      Link     @relation(fields: [linkId], references: [id])
+}

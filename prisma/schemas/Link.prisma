@@ -1,0 +1,7 @@
+model Link {
+  id      Int    @id @default(autoincrement())
+  slug    String @unique
+  context Json
+  type    String
+  views   View[]
+}

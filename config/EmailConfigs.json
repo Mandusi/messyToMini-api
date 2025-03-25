@@ -1,0 +1,13 @@
+{
+	"from": {
+		"name": "Osman Ekinci",
+		"address": "osman.ekinci@mirket.dev"
+	},
+
+	"password": "Kaf.kef66",
+
+	"transport": {
+		"host": "smtp.hostinger.com",
+		"port": 465
+	}
+}

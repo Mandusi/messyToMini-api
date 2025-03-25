@@ -1,0 +1,42 @@
+generator client {
+        provider        = "prisma-client-js"
+        previewFeatures = ["fullTextSearch", "views"]
+}
+  
+datasource db {
+        provider = "postgresql"
+        url      = env("DATABASE_URL")
+}
+model Link {
+  id      Int    @id @default(autoincrement())
+  slug    String @unique
+  context Json
+  type    String
+  views   View[]
+}
+
+model ProfileImage {
+    id     Int    @id @default(autoincrement())
+    userId Int    @unique
+    user   User   @relation(fields: [userId], references: [id])
+    file   String
+}
+
+model User {
+    id           Int           @id @default(autoincrement())
+    username     String        @unique()
+    email        String        @unique()
+    firstName    String
+    lastName     String
+    password     String
+    profileImage ProfileImage?
+}
+
+model View {
+  id        Int      @id @default(autoincrement())
+  linkId    Int
+  ip        String
+  createdAt DateTime
+  link      Link     @relation(fields: [linkId], references: [id])
+}
+
