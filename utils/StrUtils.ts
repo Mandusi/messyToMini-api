@@ -17,7 +17,7 @@ export function pin(length: number) {
 
 // RANDOM STRING
 // following function generates random string
-export function rand(length: number) {
+export function rand(length: number): string {
 	const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 	return lodash.sampleSize(chars, length).join('')
 }

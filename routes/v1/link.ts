@@ -3,7 +3,7 @@ import * as LinkController from '../../controllers/LinkController'
 
 const router = express.Router()
 
-router.post('/', LinkController.shortener)
+router.post('/', LinkController.createLink)
 
 router.get('/', LinkController.getAllLinks)
 

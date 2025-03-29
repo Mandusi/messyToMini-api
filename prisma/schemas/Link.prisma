@@ -1,7 +1,10 @@
 model Link {
-  id      Int    @id @default(autoincrement())
-  slug    String @unique
-  context Json
-  type    String
-  views   View[]
+  id        String   @id @default(uuid())
+  slug      String   @unique
+  url       String
+  type      String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  views     View[]
 }

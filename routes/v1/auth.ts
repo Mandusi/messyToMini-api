@@ -1,11 +1,11 @@
 import express from 'express'
-import { protect } from '../../middleware/auth'
+import { protect, userValidation } from '../../middleware/auth'
 import Uploader from '../../middleware/upload'
 import * as AuthController from '../../controllers/AuthController'
 
 const router = express.Router()
 
-router.post('/sign-up', AuthController.signUp)
+router.post('/sign-up', userValidation, AuthController.signUp)
 
 router.post('/login', AuthController.login)
 

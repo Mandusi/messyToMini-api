@@ -1,9 +1,10 @@
 model User {
-    id           Int           @id @default(autoincrement())
+    id           String        @id @default(uuid())
     username     String        @unique()
     email        String        @unique()
     firstName    String
     lastName     String
     password     String
+    links        Link[]
     profileImage ProfileImage?
 }

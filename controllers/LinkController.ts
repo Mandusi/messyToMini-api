@@ -3,12 +3,19 @@ import ApiReq from 'ApiReq'
 import ApiRes from 'ApiRes'
 import * as LinkService from '../services/LinkService'
 
-export const shortener = AsyncMd(async (req: ApiReq, res: ApiRes) => {
-	const link = await LinkService.shortener(req.body)
-	res.json({
-		success: true,
-		data: link,
-	})
+export const createLink = AsyncMd(async (req: ApiReq, res: ApiRes) => {
+	try {
+		const link = await LinkService.createLink(req.body)
+		res.json({
+			success: true,
+			data: link,
+		})
+	} catch (error) {
+		res.json({
+			success: false,
+			message: error,
+		})
+	}
 })
 
 export const getLink = AsyncMd(async (req: ApiReq, res: ApiRes) => {

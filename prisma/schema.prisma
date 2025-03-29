@@ -1,42 +1,46 @@
 generator client {
-        provider        = "prisma-client-js"
-        previewFeatures = ["fullTextSearch", "views"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "views"]
 }
-  
+
 datasource db {
-        provider = "postgresql"
-        url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
+
 model Link {
-  id      Int    @id @default(autoincrement())
-  slug    String @unique
-  context Json
-  type    String
-  views   View[]
+  id        String   @id @default(uuid())
+  slug      String   @unique
+  url       String
+  type      String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  views     View[]
 }
 
 model ProfileImage {
-    id     Int    @id @default(autoincrement())
-    userId Int    @unique
-    user   User   @relation(fields: [userId], references: [id])
-    file   String
+  id     String @id @default(uuid())
+  file   String
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
 }
 
 model User {
-    id           Int           @id @default(autoincrement())
-    username     String        @unique()
-    email        String        @unique()
-    firstName    String
-    lastName     String
-    password     String
-    profileImage ProfileImage?
+  id           String        @id @default(uuid())
+  username     String        @unique()
+  email        String        @unique()
+  firstName    String
+  lastName     String
+  password     String
+  links        Link[]
+  profileImage ProfileImage?
 }
 
 model View {
-  id        Int      @id @default(autoincrement())
-  linkId    Int
+  id        String   @id @default(uuid())
   ip        String
   createdAt DateTime
   link      Link     @relation(fields: [linkId], references: [id])
+  linkId    String
 }
-

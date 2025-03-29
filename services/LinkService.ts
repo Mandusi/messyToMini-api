@@ -1,22 +1,38 @@
 import Prisma from '../utils/Prisma'
+import SlugUtils from '../utils/SlugUtils'
+import { rand } from '../utils/StrUtils'
 
-export async function shortener(params: any) {
+export async function createLink(params: any) {
 	const type = params.type
 	const url = params.url
 
 	// Fetch a random 6 letter word
-	const slug = await fetch('https://random-word-api.herokuapp.com/word?length=6')
-	console.log(slug)
+	let data: string[] = (await SlugUtils(6)) as []
+	let slug = data[0]
+	console.log(slug[0])
+
+	// If the fetch fails, create random 6 letter slug
+	if (!slug) slug = rand(6)
+
+	await Prisma.link.create({
+		data: {
+			slug: slug as string,
+			url: url,
+			type: type,
+			userId: '9423e11b-8d97-4eff-9dc1-026e3ce34dbe',
+		},
+	})
+
+	return slug
 }
 
 export async function getLink(slug: string, ip: any) {
 	const link = await Prisma.link.findUnique({
 		where: { slug: slug },
-		select: { context: true, id: true },
+		select: { url: true, id: true },
 	})
-	if (!link) return
-	const context = link.context
-	const url = (context as any).url
+
+	if (!link) throw Error('There is no such a mini link!')
 
 	await Prisma.view.create({
 		data: {
@@ -25,12 +41,12 @@ export async function getLink(slug: string, ip: any) {
 			createdAt: new Date().toISOString(),
 		},
 	})
-	return url
+	return link.url
 }
 
 export async function getAllLinks() {
 	const links = await Prisma.link.findMany({
-		select: { context: true, slug: true, type: true },
+		select: { url: true, slug: true, type: true },
 		take: 5,
 	})
 	return links

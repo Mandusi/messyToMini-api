@@ -9,12 +9,13 @@ import * as StrUtils from '../utils/StrUtils'
 
 export async function signUp(props: any) {
 	const hash = await HashUtils.hash(props.password)
+
 	const user = await Prisma.user.create({
 		data: {
-			username: props.username,
-			email: props.email,
-			firstName: props.firstName,
-			lastName: props.lastName,
+			username: props.username.trim(),
+			email: props.email.trim(),
+			firstName: props.firstName.trim(),
+			lastName: props.lastName.trim(),
 			password: hash,
 			profileImage: props?.profileImage,
 		},
@@ -104,7 +105,7 @@ export async function uploadProfileImg(username: string, buffer: Buffer) {
 export async function getMe(params: any) {
 	const user = await Prisma.user.findUnique({
 		where: { username: params.username },
-		include: { profileImage: true },
+		include: { links: true },
 	})
 
 	delete (user as any).password
