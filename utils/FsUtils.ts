@@ -79,3 +79,15 @@ export async function exists(f: string) {
 		return false
 	}
 }
+
+// TXT TO JSON
+// following function returns an array of strings from the given .txt file
+export async function txtToJson(f: string) {
+	const data = await fs.readFile(f, 'utf-8')
+	const words = data.split(/\s+/)
+	return words
+}
+
+export async function createJSONFile(f: string, c: object) {
+	await fs.writeFile(f, JSON.stringify(c))
+}

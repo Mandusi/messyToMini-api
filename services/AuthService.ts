@@ -10,18 +10,22 @@ import * as StrUtils from '../utils/StrUtils'
 export async function signUp(props: any) {
 	const hash = await HashUtils.hash(props.password)
 
-	const user = await Prisma.user.create({
-		data: {
-			username: props.username.trim(),
-			email: props.email.trim(),
-			firstName: props.firstName.trim(),
-			lastName: props.lastName.trim(),
-			password: hash,
-			profileImage: props?.profileImage,
-		},
-	})
+	try {
+		const user = await Prisma.user.create({
+			data: {
+				username: props.username.trim(),
+				email: props.email.trim(),
+				firstName: props.firstName.trim(),
+				lastName: props.lastName.trim(),
+				password: hash,
+				profileImage: props?.profileImage,
+			},
+		})
 
-	return user
+		return user
+	} catch (error: any) {
+		if (error.code === 'P2002') throw new Error(`${error.meta.target} is already in use!`)
+	}
 }
 
 export async function login(props: any) {

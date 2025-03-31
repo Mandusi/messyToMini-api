@@ -1,25 +1,18 @@
 import Prisma from '../utils/Prisma'
-import SlugUtils from '../utils/SlugUtils'
+import { randomPhrese } from '../utils/SlugUtils'
 import { rand } from '../utils/StrUtils'
 
 export async function createLink(params: any) {
 	const type = params.type
 	const url = params.url
-
-	// Fetch a random 6 letter word
-	let data: string[] = (await SlugUtils(6)) as []
-	let slug = data[0]
-	console.log(slug[0])
-
-	// If the fetch fails, create random 6 letter slug
-	if (!slug) slug = rand(6)
+	const slug = randomPhrese()
 
 	await Prisma.link.create({
 		data: {
 			slug: slug as string,
 			url: url,
 			type: type,
-			userId: '9423e11b-8d97-4eff-9dc1-026e3ce34dbe',
+			userId: '462d6a6d-7b9f-4ce8-a1e6-9b31f51ee70c',
 		},
 	})
 
