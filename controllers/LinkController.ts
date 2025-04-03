@@ -5,15 +5,15 @@ import * as LinkService from '../services/LinkService'
 
 export const createLink = AsyncMd(async (req: ApiReq, res: ApiRes) => {
 	try {
-		const link = await LinkService.createLink(req.body)
+		const link = await LinkService.createLink(req)
 		res.json({
 			success: true,
 			data: link,
 		})
-	} catch (error) {
+	} catch (error: any) {
 		res.json({
 			success: false,
-			message: error,
+			message: error.message,
 		})
 	}
 })
@@ -25,7 +25,7 @@ export const getLink = AsyncMd(async (req: ApiReq, res: ApiRes) => {
 	} catch (error) {
 		res.json({
 			success: false,
-			message: error,
+			message: (error as Error).message,
 		})
 	}
 })

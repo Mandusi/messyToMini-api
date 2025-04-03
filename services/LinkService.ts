@@ -1,22 +1,22 @@
 import Prisma from '../utils/Prisma'
 import { randomPhrese } from '../utils/SlugUtils'
-import { rand } from '../utils/StrUtils'
 
 export async function createLink(params: any) {
-	const type = params.type
-	const url = params.url
+	const type = params.body.type
+	const url = params.body.url
+	const id = params.user.id
 	const slug = randomPhrese()
 
-	await Prisma.link.create({
+	const link = await Prisma.link.create({
 		data: {
-			slug: slug as string,
+			slug: slug,
 			url: url,
 			type: type,
-			userId: '462d6a6d-7b9f-4ce8-a1e6-9b31f51ee70c',
+			userId: id,
 		},
 	})
 
-	return slug
+	return link
 }
 
 export async function getLink(slug: string, ip: any) {
@@ -39,8 +39,14 @@ export async function getLink(slug: string, ip: any) {
 
 export async function getAllLinks() {
 	const links = await Prisma.link.findMany({
-		select: { url: true, slug: true, type: true },
-		take: 5,
+		select: {
+			slug: true,
+			url: true,
+			_count: {
+				select: { views: true }, // Count the number of views for each link
+			},
+		},
 	})
+
 	return links
 }

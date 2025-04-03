@@ -12,6 +12,7 @@ export const protect = AsnycMd(async (req: ApiReq, res: ApiRes, next: NextFuncti
 	jwt.verify(token, process.env.JWT_SECRET as string, (err, user) => {
 		if (err) throw err
 		req.user = user
+		console.log(user)
 		next()
 	})
 })
