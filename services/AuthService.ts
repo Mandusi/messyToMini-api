@@ -36,15 +36,32 @@ export async function login(props: any) {
 
 	if (!user) throw Error('Wrong username or password')
 
-	const match = await HashUtils.compare(props.password, user?.password)
+	const match = await HashUtils.compare(props.password, user.password)
 
 	if (!match) throw Error('Wrong username or password')
 
-	const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string, {
+	const accessToken = jwt.sign({ id: user.id }, process.env.JWT_ACCESS_SECRET as string, {
 		expiresIn: '30m',
 	})
 
-	return token
+	const refreshToken = jwt.sign(
+		{ id: user.id },
+		process.env.JWT_REFRESH_SECRET as string,
+		{ expiresIn: '7d' }
+	)
+
+	return { accessToken, refreshToken }
+}
+
+export async function refreshToken(token: string) {
+	const user = jwt.verify(token, process.env.JWT_REFRESH_SECRET as string)
+	if (!user) throw Error('Invalid or expired refresh token')
+	if (typeof user === 'object') {
+		const newToken = jwt.sign({ id: user.id }, process.env.JWT_ACCESS_SECRET as string, {
+			expiresIn: '15m',
+		})
+		return newToken
+	}
 }
 
 export async function forgotPassword(email: any) {
@@ -76,7 +93,9 @@ export async function changePassword(props: any) {
 		where: { username: props.username },
 	})
 
-	const match = await HashUtils.compare(props.oldPassword, user?.password as string)
+	if (!user) throw Error('Wrong username or password')
+
+	const match = await HashUtils.compare(props.oldPassword, user.password as string)
 
 	if (!match) throw Error('Wrong username or password')
 
@@ -106,16 +125,9 @@ export async function uploadProfileImg(username: string, buffer: Buffer) {
 	})
 }
 
-export async function getMe(params: any) {
-	// const user = await Prisma.user.findUnique({
-	// 	where: { username: params.username },
-	// 	include: { links: true },
-	// })
-
-	// delete (user as any).password
-
+export async function getMe(user: any) {
 	const linksWithViewCount = await Prisma.link.findMany({
-		where: { id: params.id },
+		where: { userId: user.id },
 		select: {
 			id: true,
 			slug: true,

@@ -9,6 +9,8 @@ router.post('/sign-up', userValidation, AuthController.signUp)
 
 router.post('/login', AuthController.login)
 
+router.get('/refresh-token', AuthController.refreshToken)
+
 router.post('/forgot-password', AuthController.forgotPassword)
 
 router.post('/reset-password', AuthController.resetPassword)

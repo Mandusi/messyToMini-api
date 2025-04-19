@@ -9,12 +9,9 @@ export const protect = AsnycMd(async (req: ApiReq, res: ApiRes, next: NextFuncti
 
 	if (!token) throw Error('No Token!')
 
-	jwt.verify(token, process.env.JWT_SECRET as string, (err, user) => {
-		if (err) throw err
-		req.user = user
-		console.log(user)
-		next()
-	})
+	const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET as string)
+	req.user = decoded
+	next()
 })
 
 export const userValidation = AsnycMd(
@@ -29,7 +26,7 @@ export const userValidation = AsnycMd(
 
 		if (!req.body.email) throw new Error('Email is required!')
 
-		const emailRGX = /^\S+@\S+\.\S+$/
+		const emailRGX: RegExp = /^\S+@\S+\.\S+$/
 		if (!emailRGX.test(req.body.email)) throw new Error('Email is not valid!')
 
 		if (req.body.password.length < 8)

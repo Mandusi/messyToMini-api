@@ -5,6 +5,7 @@ export async function createLink(params: any) {
 	const type = params.body.type
 	const url = params.body.url
 	const id = params.user.id
+	console.log(id)
 	const slug = randomPhrese()
 
 	const link = await Prisma.link.create({

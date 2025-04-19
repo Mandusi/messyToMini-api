@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 
 import Prisma from './utils/Prisma'
 import env from './utils/Env'
@@ -24,11 +25,14 @@ async function start() {
 	const app = express()
 
 	// set CORS
-	app.use(cors())
+	app.use(cors({ origin: 'http://localhost:3098', credentials: true }))
 
 	// set express options
 	app.use(express.urlencoded({ extended: true }))
 	app.use(express.json())
+
+	// set cookie-Parser
+	app.use(cookieParser())
 
 	// register routers
 	app.use('/api/v1/auth', AuthRouter)
