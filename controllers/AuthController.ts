@@ -4,53 +4,22 @@ import ApiRes from 'ApiRes'
 import * as AuthService from '../services/AuthService'
 
 export const signUp = AsyncMd(async (req: ApiReq, res: ApiRes) => {
-	try {
-		const user = await AuthService.signUp(req.body)
-		res.json({
-			success: true,
-			data: user,
-		})
-	} catch (error) {
-		res.status(401).json({ error: error })
-	}
+	const user = await AuthService.signUp(req.body)
+	res.json({
+		success: true,
+		data: user,
+	})
 })
 
 export const login = AsyncMd(async (req: ApiReq, res: ApiRes) => {
-	try {
-		const token = await AuthService.login(req.body)
-
-		res.cookie('refreshToken', token.refreshToken, {
-			maxAge: 7 * 24 * 60 * 60 * 1000,
-			httpOnly: true,
-			sameSite: 'lax',
-		})
-
-		res.json({
-			success: true,
-			token: token.accessToken,
-		})
-	} catch (error) {
-		res.status(401).json({ error: error })
-	}
+	const authPayload = await AuthService.login(req.body)
+	res.json({ success: true, data: authPayload })
 })
 
-export const refreshToken = AsyncMd(async (req: ApiReq, res: ApiRes) => {
-	const token = req.cookies.refreshToken
-	console.log('token: ')
-	console.log(token)
-	if (!token) {
-		res.status(401).json({ error: 'no refresh token' })
-	}
-
-	try {
-		const newAccessToken = await AuthService.refreshToken(token)
-		res.json({
-			success: true,
-			token: newAccessToken,
-		})
-	} catch (error) {
-		res.status(401).json({ error })
-	}
+export const refreshLogin = AsyncMd(async (req: ApiReq, res: ApiRes) => {
+	const token = req.get('RefreshToken') as string
+	const authPayload = await AuthService.refreshLogin(token)
+	res.json({ success: true, data: authPayload })
 })
 
 export const forgotPassword = AsyncMd(async (req: ApiReq, res: ApiRes) => {

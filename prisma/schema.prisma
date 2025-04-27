@@ -1,40 +1,39 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch", "views"]
+        provider        = "prisma-client-js"
+        previewFeatures = ["fullTextSearch", "views"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+        provider = "postgresql"
+        url      = env("DATABASE_URL")
 }
-
 model Link {
   id        String   @id @default(uuid())
   slug      String   @unique
   url       String
   type      String
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
   views     View[]
 }
 
 model ProfileImage {
-  id     String @id @default(uuid())
-  file   String
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @unique
+    id     String @id @default(uuid())
+    file   String
+    user   User   @relation(fields: [userId], references: [id])
+    userId String @unique
 }
 
 model User {
-  id           String        @id @default(uuid())
-  username     String        @unique()
-  email        String        @unique()
-  firstName    String
-  lastName     String
-  password     String
-  links        Link[]
-  profileImage ProfileImage?
+    id           String        @id @default(uuid())
+    username     String        @unique()
+    email        String        @unique()
+    firstName    String
+    lastName     String
+    password     String
+    links        Link[]
+    profileImage ProfileImage?
 }
 
 model View {
@@ -44,3 +43,4 @@ model View {
   link      Link     @relation(fields: [linkId], references: [id])
   linkId    String
 }
+

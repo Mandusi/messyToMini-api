@@ -1,3 +1,5 @@
+import AuthPayload from 'AuthPayload'
+
 import jwt from 'jsonwebtoken'
 
 import Prisma from '../utils/Prisma'
@@ -8,30 +10,44 @@ import * as Email from '../utils/Email'
 import * as StrUtils from '../utils/StrUtils'
 
 export async function signUp(props: any) {
+	const usernameExists = await Prisma.user.findUnique({
+		where: { username: props.username },
+	})
+
+	if (usernameExists) throw new Error('Username already exists')
+
+	const emailExists = await Prisma.user.findUnique({
+		where: { email: props.email },
+	})
+
+	if (emailExists) throw new Error('Email already exists')
+
 	const hash = await HashUtils.hash(props.password)
 
-	try {
-		const user = await Prisma.user.create({
-			data: {
-				username: props.username.trim(),
-				email: props.email.trim(),
-				firstName: props.firstName.trim(),
-				lastName: props.lastName.trim(),
-				password: hash,
-				profileImage: props?.profileImage,
-			},
-		})
+	const user = await Prisma.user.create({
+		data: {
+			username: props.username.trim(),
+			email: props.email.trim(),
+			firstName: props.firstName.trim(),
+			lastName: props.lastName.trim(),
+			password: hash,
+			profileImage: props?.profileImage,
+		},
+	})
 
-		return user
-	} catch (error: any) {
-		if (error.code === 'P2002') throw new Error(`${error.meta.target} is already in use!`)
-	}
+	return user
 }
 
-export async function login(props: any) {
+export async function login(props: any): Promise<AuthPayload> {
 	const user = await Prisma.user.findUnique({
 		where: { username: props.username },
-		select: { username: true, password: true, id: true },
+		select: {
+			username: true,
+			password: true,
+			firstName: true,
+			lastName: true,
+			id: true,
+		},
 	})
 
 	if (!user) throw Error('Wrong username or password')
@@ -50,17 +66,28 @@ export async function login(props: any) {
 		{ expiresIn: '7d' }
 	)
 
-	return { accessToken, refreshToken }
+	return {
+		id: user.id,
+		username: user.username,
+		firstName: user.firstName,
+		lastName: user.lastName,
+		token: accessToken,
+		refreshToken: refreshToken,
+	}
 }
 
-export async function refreshToken(token: string) {
-	const user = jwt.verify(token, process.env.JWT_REFRESH_SECRET as string)
-	if (!user) throw Error('Invalid or expired refresh token')
-	if (typeof user === 'object') {
-		const newToken = jwt.sign({ id: user.id }, process.env.JWT_ACCESS_SECRET as string, {
-			expiresIn: '15m',
-		})
-		return newToken
+export async function refreshLogin(token: string): Promise<AuthPayload> {
+	const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET as string) as any
+	if (!decoded) throw Error('Invalid or expired refresh token')
+	const newToken = jwt.sign({ id: decoded.id }, process.env.JWT_ACCESS_SECRET as string, {
+		expiresIn: '15m',
+	})
+	return {
+		id: decoded.id,
+		username: decoded.username,
+		firstName: decoded.firstName,
+		lastName: decoded.lastName,
+		token: newToken,
 	}
 }
 
