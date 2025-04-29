@@ -6,6 +6,8 @@ const router = express.Router()
 
 router.post('/', protect, LinkController.createLink)
 
+router.post('/guest', LinkController.createLink)
+
 router.get('/', LinkController.getAllLinks)
 
 router.get('/:slug', LinkController.getLink)

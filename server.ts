@@ -31,9 +31,6 @@ async function start() {
 	app.use(express.urlencoded({ extended: true }))
 	app.use(express.json())
 
-	// set cookie-Parser
-	app.use(cookieParser())
-
 	// register routers
 	app.use('/api/v1/auth', AuthRouter)
 	app.use('/api/v1/link', LinkRouter)

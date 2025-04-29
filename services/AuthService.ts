@@ -167,6 +167,7 @@ export async function getMe(user: any) {
 				},
 			},
 		},
+		orderBy: { createdAt: 'desc' },
 	})
 	return linksWithViewCount
 }
