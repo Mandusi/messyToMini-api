@@ -12,4 +12,6 @@ router.get('/', LinkController.getAllLinks)
 
 router.get('/:slug', LinkController.getLink)
 
+router.delete('/:id', protect, LinkController.deleteLink)
+
 export default router
