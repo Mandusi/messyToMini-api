@@ -1,7 +1,7 @@
 module.exports = {
 	apps: [
 		{
-			name: 'auth-api',
+			name: 'messytomini-api',
 			script: 'node build/server.js',
 		},
 	],
